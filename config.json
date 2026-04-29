@@ -1,6 +1,6 @@
 {
   "defaultMode": "slideshow",
-  "slideshowInterval": 10,
+  "slideshowInterval": 60,
   "showModeSwitcher": true,
   "weather": {
     "provider": "open-meteo",
