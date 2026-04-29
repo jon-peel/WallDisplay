@@ -1,0 +1,27 @@
+{
+  "defaultMode": "slideshow",
+  "slideshowInterval": 10,
+  "showModeSwitcher": true,
+  "weather": {
+    "provider": "open-meteo",
+    "apiKey": "",
+    "latitude": 55.7558,
+    "longitude": 37.6173,
+    "locationName": "Moscow",
+    "units": "metric"
+  },
+  "videoWall": {
+    "videos": [
+      "https://www.youtube.com/watch?v=C9hjksOtngo",
+      "https://www.youtube.com/watch?v=C9hjksOtngo",
+      "https://www.youtube.com/watch?v=C9hjksOtngo",
+      "https://www.youtube.com/watch?v=C9hjksOtngo",
+      "https://www.youtube.com/watch?v=C9hjksOtngo",
+      "https://www.youtube.com/watch?v=C9hjksOtngo",
+      "https://www.youtube.com/watch?v=C9hjksOtngo",
+      "https://www.youtube.com/watch?v=C9hjksOtngo",
+      "https://www.youtube.com/watch?v=C9hjksOtngo",
+      "https://www.youtube.com/watch?v=C9hjksOtngo"
+    ]
+  }
+}
