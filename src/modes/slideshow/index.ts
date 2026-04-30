@@ -67,7 +67,7 @@ function renderSlide(slide: Slide): HTMLElement {
   const el = document.createElement('div')
   el.className = 'slide'
   el.style.cssText =
-    'position:absolute;inset:0;opacity:0;transition:opacity 0.8s ease-in-out;display:flex;background:#000;'
+    'position:absolute;top:0;right:0;bottom:0;left:0;opacity:0;transition:opacity 0.8s ease-in-out;display:flex;background:#000;'
 
   if (slide.type === 'fullscreen') {
     el.appendChild(photoTile(slide.photo.filename, 'width:100%;height:100%;'))
@@ -104,7 +104,7 @@ export function mountSlideshow(
     const msg = document.createElement('div')
     msg.textContent = 'No photos found. Add images to the photos/ directory and rebuild.'
     msg.style.cssText =
-      'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.5);font-size:1.2rem;'
+      'position:absolute;top:0;right:0;bottom:0;left:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.5);font-size:1.2rem;'
     container.appendChild(msg)
     return () => {}
   }
