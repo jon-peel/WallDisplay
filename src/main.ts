@@ -4,6 +4,9 @@ import type { Mode } from './generated/app-config'
 import { photos } from './generated/photo-manifest'
 import { slideshowInterval, weather, videoIds } from './generated/app-config'
 import { clearApp } from './utils/dom'
+import { mountSlideshow } from './modes/slideshow/index'
+import { mountSlideshowWeather } from './modes/slideshow-weather/index'
+import { mountVideoWall } from './modes/video-wall/index'
 
 let activeCleanup: (() => void) | null = null
 
@@ -22,7 +25,7 @@ function parseHash(): Mode {
   return defaultMode
 }
 
-async function renderMode(mode: Mode): Promise<void> {
+function renderMode(mode: Mode): void {
   activeCleanup?.()
   activeCleanup = null
   clearApp()
@@ -35,16 +38,13 @@ async function renderMode(mode: Mode): Promise<void> {
   app.appendChild(container)
 
   if (mode === 'slideshow') {
-    const { mountSlideshow } = await import('./modes/slideshow/index')
     activeCleanup = mountSlideshow(container, photos, { interval: slideshowInterval })
   } else if (mode === 'slideshow-weather') {
-    const { mountSlideshowWeather } = await import('./modes/slideshow-weather/index')
     activeCleanup = mountSlideshowWeather(container, photos, {
       interval: slideshowInterval,
       weather,
     })
   } else {
-    const { mountVideoWall } = await import('./modes/video-wall/index')
     activeCleanup = mountVideoWall(container, videoIds)
   }
 }
@@ -112,7 +112,7 @@ function mountSwitcher(): void {
   updateSwitcher(parseHash())
 }
 
-window.addEventListener('hashchange', () => void renderMode(parseHash()))
+window.addEventListener('hashchange', () => renderMode(parseHash()))
 
 mountSwitcher()
-void renderMode(parseHash())
+renderMode(parseHash())

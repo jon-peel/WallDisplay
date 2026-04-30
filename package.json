@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run build:manifest && npm run build:config && vite build",
+    "build": "npm run build:manifest && npm run build:config && npm run build:polyfills && vite build",
+    "build:polyfills": "node -e \"require('fs').copyFileSync('node_modules/core-js-bundle/minified.js','public/polyfills.js')\"",
     "build:manifest": "npx tsx scripts/build-manifest.ts",
     "build:config": "npx tsx scripts/build-config.ts",
     "preview": "npm run build && wrangler dev",
@@ -18,6 +19,7 @@
     "@types/youtube": "^0.2.0",
     "@vitejs/plugin-legacy": "^8.0.1",
     "core-js": "^3.49.0",
+    "core-js-bundle": "^3.49.0",
     "sharp": "^0.34.5",
     "tsx": "^4.7.0",
     "typescript": "^6.0.3",

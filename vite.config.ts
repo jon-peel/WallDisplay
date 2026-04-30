@@ -6,6 +6,7 @@ import { cloudflare } from "@cloudflare/vite-plugin";
 export default defineConfig({
   plugins: [legacy({
     targets: ['safari >= 9'],
+    polyfills: false,
   }), cloudflare()],
   resolve: {
     alias: {
