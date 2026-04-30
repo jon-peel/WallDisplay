@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run build:manifest && npm run build:config && npm run build:polyfills && vite build",
+    "build": "npm run build:icons && npm run build:manifest && npm run build:config && npm run build:polyfills && vite build",
+    "build:icons": "npx tsx scripts/build-icons.ts",
     "build:polyfills": "npx tsx scripts/build-polyfills.ts",
     "build:manifest": "npx tsx scripts/build-manifest.ts",
     "build:config": "npx tsx scripts/build-config.ts",
