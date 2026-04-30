@@ -19,12 +19,16 @@
     <div id="dbg" style="position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,0.85);color:#0f0;font-family:monospace;font-size:0.75rem;padding:8px;max-height:40vh;overflow-y:auto;z-index:9999;white-space:pre-wrap;"></div>
     <script>
       var dbg = document.getElementById('dbg');
-      dbg.textContent = navigator.userAgent + '\n';
+      var dbgHeader = navigator.userAgent + '\n';
+      function dbgAppend(text) {
+        if (!dbg.textContent) dbg.textContent = dbgHeader;
+        dbg.textContent += text;
+      }
       window.onerror = function(msg, src, line, col, err) {
-        dbg.textContent += '\nERROR: ' + msg + '\n  at ' + src + ':' + line + ':' + col;
+        dbgAppend('\nERROR: ' + msg + '\n  at ' + src + ':' + line + ':' + col);
       };
       window.addEventListener('unhandledrejection', function(e) {
-        dbg.textContent += '\nUNHANDLED: ' + (e.reason && e.reason.stack ? e.reason.stack : e.reason);
+        dbgAppend('\nUNHANDLED: ' + (e.reason && e.reason.stack ? e.reason.stack : e.reason));
       });
     </script>
     <script nomodule src="/polyfills.js"></script>
