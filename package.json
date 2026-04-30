@@ -8,10 +8,12 @@
     "build": "npm run build:manifest && npm run build:config && vite build",
     "build:manifest": "npx tsx scripts/build-manifest.ts",
     "build:config": "npx tsx scripts/build-config.ts",
-    "preview": "vite preview",
-    "convert:photos": "npx tsx scripts/convert-photos.ts"
+    "preview": "npm run build && wrangler dev",
+    "convert:photos": "npx tsx scripts/convert-photos.ts",
+    "deploy": "npm run build && wrangler deploy"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.34.0",
     "@types/node": "^25.6.0",
     "@types/youtube": "^0.2.0",
     "@vitejs/plugin-legacy": "^8.0.1",
@@ -19,6 +21,7 @@
     "sharp": "^0.34.5",
     "tsx": "^4.7.0",
     "typescript": "^6.0.3",
-    "vite": "^8.0.10"
+    "vite": "^8.0.10",
+    "wrangler": "^4.86.0"
   }
 }

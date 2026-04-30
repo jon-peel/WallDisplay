@@ -1,12 +1,12 @@
 import { defineConfig } from 'vite'
 import legacy from '@vitejs/plugin-legacy'
 
+import { cloudflare } from "@cloudflare/vite-plugin";
+
 export default defineConfig({
-  plugins: [
-    legacy({
-      targets: ['safari >= 12'],
-    }),
-  ],
+  plugins: [legacy({
+    targets: ['safari >= 12'],
+  }), cloudflare()],
   resolve: {
     alias: {
       '@': '/src',
