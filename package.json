@@ -12,14 +12,14 @@
     "convert:photos": "npx tsx scripts/convert-photos.ts"
   },
   "devDependencies": {
-    "@types/node": "^20.12.0",
-    "@types/youtube": "^0.0.50",
-    "@vitejs/plugin-legacy": "^5.4.3",
+    "@types/node": "^25.6.0",
+    "@types/youtube": "^0.2.0",
+    "@vitejs/plugin-legacy": "^8.0.1",
     "core-js": "^3.49.0",
-    "sharp": "^0.33.3",
+    "sharp": "^0.34.5",
     "tsx": "^4.7.0",
-    "typescript": "^5.3.3",
-    "vite": "^5.2.0",
-    "vite-plugin-static-copy": "^1.0.3"
+    "typescript": "^6.0.3",
+    "vite": "^8.0.10",
+    "vite-plugin-static-copy": "^4.1.0"
   }
 }
