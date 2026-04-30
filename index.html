@@ -9,6 +9,17 @@
     <div id="app" style="display:flex;align-items:center;justify-content:center;height:100%;color:rgba(255,255,255,0.6);font-family:sans-serif;font-size:1.2rem;background:#000;">
       Loading&hellip;
     </div>
+    <div id="dbg" style="position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,0.85);color:#0f0;font-family:monospace;font-size:0.75rem;padding:8px;max-height:40vh;overflow-y:auto;z-index:9999;white-space:pre-wrap;"></div>
+    <script>
+      var dbg = document.getElementById('dbg');
+      dbg.textContent = navigator.userAgent + '\n';
+      window.onerror = function(msg, src, line, col, err) {
+        dbg.textContent += '\nERROR: ' + msg + '\n  at ' + src + ':' + line + ':' + col;
+      };
+      window.addEventListener('unhandledrejection', function(e) {
+        dbg.textContent += '\nUNHANDLED: ' + (e.reason && e.reason.stack ? e.reason.stack : e.reason);
+      });
+    </script>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
