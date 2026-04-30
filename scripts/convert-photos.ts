@@ -12,69 +12,41 @@ async function convertPhotos(): Promise<void> {
   )
 
   if (files.length === 0) {
-    console.log('No JPEG source files found in photos/')
-  } else {
-    let converted = 0
-    let skipped = 0
-
-    for (const file of files) {
-      const inputPath = path.join(PHOTOS_DIR, file)
-      const baseName = path.basename(file, path.extname(file))
-      const webpPath = path.join(PHOTOS_DIR, baseName + '.webp')
-      const jpgFallbackPath = path.join(PHOTOS_DIR, baseName + '.jpg')
-
-      if (fs.existsSync(webpPath)) {
-        fs.unlinkSync(inputPath)
-        console.log(`Removed ${file} (${baseName}.webp already exists)`)
-        skipped++
-        continue
-      }
-
-      const resized = sharp(inputPath).resize(MAX_DIMENSION, MAX_DIMENSION, {
-        fit: 'inside',
-        withoutEnlargement: true,
-      })
-
-      await resized.clone().webp({ quality: 82 }).toFile(webpPath)
-      await resized.clone().jpeg({ quality: 85 }).toFile(jpgFallbackPath)
-
-      const inputSize = fs.statSync(inputPath).size
-      const outputSize = fs.statSync(webpPath).size
-      const saving = (((inputSize - outputSize) / inputSize) * 100).toFixed(0)
-      fs.unlinkSync(inputPath)
-      console.log(`${file} → ${baseName}.webp + ${baseName}.jpg  (webp ${saving}% smaller than source)`)
-      converted++
-    }
-
-    console.log(`\nConverted: ${converted}, skipped: ${skipped}.`)
-  }
-
-  await generateFallbacks()
-}
-
-async function generateFallbacks(): Promise<void> {
-  const webpFiles = fs.readdirSync(PHOTOS_DIR).filter((f) =>
-    path.extname(f).toLowerCase() === '.webp'
-  )
-
-  const missing = webpFiles.filter((f) => {
-    const jpgPath = path.join(PHOTOS_DIR, path.basename(f, '.webp') + '.jpg')
-    return !fs.existsSync(jpgPath)
-  })
-
-  if (missing.length === 0) {
-    console.log('All WebP photos already have JPEG fallbacks.')
+    console.log('No JPEG files found in photos/')
     return
   }
 
-  console.log(`Generating JPEG fallbacks for ${missing.length} WebP file(s)...`)
-  for (const file of missing) {
+  let converted = 0
+  let skipped = 0
+
+  for (const file of files) {
     const inputPath = path.join(PHOTOS_DIR, file)
-    const jpgPath = path.join(PHOTOS_DIR, path.basename(file, '.webp') + '.jpg')
-    await sharp(inputPath).jpeg({ quality: 85 }).toFile(jpgPath)
-    console.log(`  ${file} → ${path.basename(jpgPath)}`)
+    const baseName = path.basename(file, path.extname(file))
+    const outputPath = path.join(PHOTOS_DIR, baseName + '.jpg')
+
+    if (outputPath !== inputPath && fs.existsSync(outputPath)) {
+      fs.unlinkSync(inputPath)
+      console.log(`Removed ${file} (${baseName}.jpg already exists)`)
+      skipped++
+      continue
+    }
+
+    const tmpPath = outputPath + '.tmp.jpg'
+    await sharp(inputPath)
+      .resize(MAX_DIMENSION, MAX_DIMENSION, { fit: 'inside', withoutEnlargement: true })
+      .jpeg({ quality: 85 })
+      .toFile(tmpPath)
+
+    const inputSize = fs.statSync(inputPath).size
+    const outputSize = fs.statSync(tmpPath).size
+    fs.unlinkSync(inputPath)
+    fs.renameSync(tmpPath, outputPath)
+    const saving = (((inputSize - outputSize) / inputSize) * 100).toFixed(0)
+    console.log(`${file} → ${baseName}.jpg  (${saving}% smaller)`)
+    converted++
   }
-  console.log('Done generating fallbacks.')
+
+  console.log(`\nDone: ${converted} converted, ${skipped} skipped.`)
 }
 
 convertPhotos().catch((err) => {

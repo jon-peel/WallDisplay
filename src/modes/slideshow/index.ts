@@ -45,25 +45,6 @@ function groupPhotos(photos: PhotoMeta[]): Slide[] {
   return slides
 }
 
-function createPhotoEl(filename: string, style: string): HTMLPictureElement {
-  const jpgName = filename.replace(/\.webp$/i, '.jpg')
-  const pic = document.createElement('picture')
-  const source = document.createElement('source')
-  source.type = 'image/webp'
-  source.srcset = `/photos/${filename}`
-  const img = document.createElement('img')
-  img.src = `/photos/${jpgName}`
-  img.alt = ''
-  img.style.cssText = style
-  img.onerror = () => {
-    const slide = pic.closest('.slide') as HTMLElement | null
-    if (slide) slide.style.display = 'none'
-  }
-  pic.appendChild(source)
-  pic.appendChild(img)
-  return pic
-}
-
 function renderSlide(slide: Slide): HTMLElement {
   const el = document.createElement('div')
   el.className = 'slide'
@@ -71,21 +52,37 @@ function renderSlide(slide: Slide): HTMLElement {
     'position:absolute;inset:0;opacity:0;transition:opacity 0.8s ease-in-out;display:flex;background:#000;'
 
   if (slide.type === 'fullscreen') {
-    el.appendChild(createPhotoEl(slide.photo.filename, 'width:100%;height:100%;object-fit:cover;'))
+    const img = document.createElement('img')
+    img.src = `/photos/${slide.photo.filename}`
+    img.alt = ''
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;'
+    el.appendChild(img)
   } else if (slide.type === 'portrait-pair') {
     for (const photo of slide.photos) {
-      el.appendChild(createPhotoEl(photo.filename, 'width:50%;height:100%;object-fit:cover;'))
+      const img = document.createElement('img')
+      img.src = `/photos/${photo.filename}`
+      img.alt = ''
+      img.style.cssText = 'width:50%;height:100%;object-fit:cover;'
+      el.appendChild(img)
     }
   } else {
     const left = document.createElement('div')
     left.style.cssText = 'width:50%;height:100%;flex-shrink:0;'
-    left.appendChild(createPhotoEl(slide.portrait.filename, 'width:100%;height:100%;object-fit:cover;'))
+    const leftImg = document.createElement('img')
+    leftImg.src = `/photos/${slide.portrait.filename}`
+    leftImg.alt = ''
+    leftImg.style.cssText = 'width:100%;height:100%;object-fit:cover;'
+    left.appendChild(leftImg)
     el.appendChild(left)
 
     const right = document.createElement('div')
     right.style.cssText = 'width:50%;height:100%;flex-shrink:0;display:flex;flex-direction:column;'
     for (const photo of slide.landscapes) {
-      right.appendChild(createPhotoEl(photo.filename, 'width:100%;height:50%;object-fit:cover;'))
+      const img = document.createElement('img')
+      img.src = `/photos/${photo.filename}`
+      img.alt = ''
+      img.style.cssText = 'width:100%;height:50%;object-fit:cover;'
+      right.appendChild(img)
     }
     el.appendChild(right)
   }
