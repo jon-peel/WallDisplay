@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "npm run build:manifest && npm run build:config && npm run build:polyfills && vite build",
-    "build:polyfills": "node -e \"require('fs').copyFileSync('node_modules/core-js-bundle/minified.js','public/polyfills.js')\"",
+    "build:polyfills": "npx tsx scripts/build-polyfills.ts",
     "build:manifest": "npx tsx scripts/build-manifest.ts",
     "build:config": "npx tsx scripts/build-config.ts",
     "preview": "npm run build && wrangler dev",
