@@ -9,7 +9,7 @@ interface PhotoMeta {
   orientation: 'landscape' | 'portrait'
 }
 
-const PHOTOS_DIR = path.join(process.cwd(), 'photos')
+const PHOTOS_DIR = path.join(process.cwd(), 'public/photos')
 const OUTPUT_FILE = path.join(process.cwd(), 'src/generated/photo-manifest.ts')
 const SUPPORTED_EXTS = new Set(['.jpg', '.jpeg', '.png'])
 

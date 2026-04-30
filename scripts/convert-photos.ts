@@ -2,7 +2,7 @@ import sharp from 'sharp'
 import fs from 'fs'
 import path from 'path'
 
-const PHOTOS_DIR = path.join(process.cwd(), 'photos')
+const PHOTOS_DIR = path.join(process.cwd(), 'public/photos')
 const MAX_DIMENSION = 1920
 const JPEG_EXTS = new Set(['.jpg', '.jpeg'])
 
