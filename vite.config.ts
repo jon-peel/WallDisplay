@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite'
+import legacy from '@vitejs/plugin-legacy'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
 import { createReadStream, existsSync } from 'fs'
 import { join, extname } from 'path'
@@ -12,6 +13,9 @@ const MIME: Record<string, string> = {
 
 export default defineConfig({
   plugins: [
+    legacy({
+      targets: ['safari >= 12'],
+    }),
     viteStaticCopy({
       targets: [{ src: 'photos/*', dest: 'photos' }],
     }),

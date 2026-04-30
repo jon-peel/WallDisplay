@@ -11,7 +11,8 @@ interface PhotoMeta {
 
 const PHOTOS_DIR = path.join(process.cwd(), 'photos')
 const OUTPUT_FILE = path.join(process.cwd(), 'src/generated/photo-manifest.ts')
-const SUPPORTED_EXTS = new Set(['.jpg', '.jpeg', '.png', '.webp'])
+// JPEGs are JPEG fallbacks for WebP files — only index primary formats
+const SUPPORTED_EXTS = new Set(['.webp', '.png'])
 
 async function buildManifest(): Promise<void> {
   const photos: PhotoMeta[] = []
