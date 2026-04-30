@@ -45,6 +45,24 @@ function groupPhotos(photos: PhotoMeta[]): Slide[] {
   return slides
 }
 
+function photoUrl(filename: string): string {
+  return '/photos/' + encodeURI(filename)
+    .replace(/\\/g, '%5C')
+    .replace(/'/g, '%27')
+    .replace(/\(/g, '%28')
+    .replace(/\)/g, '%29')
+    .replace(/#/g, '%23')
+}
+
+function photoTile(filename: string, sizeCss: string): HTMLDivElement {
+  const tile = document.createElement('div')
+  tile.style.cssText =
+    sizeCss +
+    `background-image:url('${photoUrl(filename)}');` +
+    'background-size:cover;background-position:center;background-repeat:no-repeat;'
+  return tile
+}
+
 function renderSlide(slide: Slide): HTMLElement {
   const el = document.createElement('div')
   el.className = 'slide'
@@ -52,37 +70,21 @@ function renderSlide(slide: Slide): HTMLElement {
     'position:absolute;inset:0;opacity:0;transition:opacity 0.8s ease-in-out;display:flex;background:#000;'
 
   if (slide.type === 'fullscreen') {
-    const img = document.createElement('img')
-    img.src = `/photos/${slide.photo.filename}`
-    img.alt = ''
-    img.style.cssText = 'width:100%;height:100%;object-fit:cover;'
-    el.appendChild(img)
+    el.appendChild(photoTile(slide.photo.filename, 'width:100%;height:100%;'))
   } else if (slide.type === 'portrait-pair') {
     for (const photo of slide.photos) {
-      const img = document.createElement('img')
-      img.src = `/photos/${photo.filename}`
-      img.alt = ''
-      img.style.cssText = 'width:50%;height:100%;object-fit:cover;'
-      el.appendChild(img)
+      el.appendChild(photoTile(photo.filename, 'width:50%;height:100%;flex-shrink:0;'))
     }
   } else {
     const left = document.createElement('div')
     left.style.cssText = 'width:50%;height:100%;flex-shrink:0;'
-    const leftImg = document.createElement('img')
-    leftImg.src = `/photos/${slide.portrait.filename}`
-    leftImg.alt = ''
-    leftImg.style.cssText = 'width:100%;height:100%;object-fit:cover;'
-    left.appendChild(leftImg)
+    left.appendChild(photoTile(slide.portrait.filename, 'width:100%;height:100%;'))
     el.appendChild(left)
 
     const right = document.createElement('div')
     right.style.cssText = 'width:50%;height:100%;flex-shrink:0;display:flex;flex-direction:column;'
     for (const photo of slide.landscapes) {
-      const img = document.createElement('img')
-      img.src = `/photos/${photo.filename}`
-      img.alt = ''
-      img.style.cssText = 'width:100%;height:50%;object-fit:cover;'
-      right.appendChild(img)
+      right.appendChild(photoTile(photo.filename, 'width:100%;height:50%;flex-shrink:0;'))
     }
     el.appendChild(right)
   }
