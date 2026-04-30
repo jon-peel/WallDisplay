@@ -8,17 +8,17 @@
     "build": "npm run build:manifest && npm run build:config && vite build",
     "build:manifest": "npx tsx scripts/build-manifest.ts",
     "build:config": "npx tsx scripts/build-config.ts",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "convert:photos": "npx tsx scripts/convert-photos.ts"
   },
   "devDependencies": {
     "@types/node": "^20.12.0",
     "@types/youtube": "^0.0.50",
+    "sharp": "^0.33.3",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3",
     "vite": "^5.2.0",
     "vite-plugin-static-copy": "^1.0.3"
   },
-  "dependencies": {
-    "sharp": "^0.33.3"
-  }
+  "dependencies": {}
 }
