@@ -139,7 +139,6 @@ async function fetchOpenMeteo(
     `&timezone=auto&forecast_days=6&temperature_unit=${tempUnit}`
 
   const res = await fetchWithTimeout(url, FETCH_TIMEOUT_MS)
-  dbg('weather: http', res.status)
   if (!res.ok) throw new Error(`Open-Meteo ${res.status}`)
   const data = (await res.json()) as {
     current: {
@@ -157,7 +156,6 @@ async function fetchOpenMeteo(
       weather_code: number[]
     }
   }
-  dbg('weather: parsed ok')
 
   // Find the current hour index in the hourly array
   const currentHour = data.current.time.slice(0, 13) // "YYYY-MM-DDTHH"
@@ -214,8 +212,6 @@ async function fetchOpenWeatherMap(
       FETCH_TIMEOUT_MS,
     ),
   ])
-  dbg('weather: http current', curRes.status)
-  dbg('weather: http forecast', fcRes.status)
 
   if (!curRes.ok) throw new Error(`OWM ${curRes.status}`)
   if (!fcRes.ok) throw new Error(`OWM forecast ${fcRes.status}`)
@@ -232,7 +228,6 @@ async function fetchOpenWeatherMap(
       weather: Array<{ id: number; description: string }>
     }>
   }
-  dbg('weather: parsed ok')
 
   const curCode = cur.weather[0]?.id ?? 800
   const hourly = fc.list.slice(0, 12).map((entry) => {
@@ -315,7 +310,6 @@ export interface WeatherConfig {
 }
 
 export async function fetchWeather(cfg: WeatherConfig): Promise<WeatherData> {
-  dbg('weather: fetching', cfg.provider)
   try {
     let data: WeatherData
     if (cfg.provider === 'openweathermap') {
@@ -334,11 +328,7 @@ export async function fetchWeather(cfg: WeatherConfig): Promise<WeatherData> {
   } catch (err) {
     dbg('weather: fetch failed', err)
     const cached = loadCache()
-    if (cached) {
-      dbg('weather: serving cached')
-      return cached
-    }
-    dbg('weather: no cache available')
+    if (cached) return cached
     throw new Error('Weather unavailable and no cache')
   }
 }

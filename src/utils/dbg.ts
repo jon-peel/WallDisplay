@@ -6,7 +6,7 @@ function pad(n: number): string {
 
 function timestamp(): string {
   const d = new Date()
-  return pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds())
+  return pad(d.getHours()) + ':' + pad(d.getMinutes())
 }
 
 function stringifyDetail(detail: unknown): string {
