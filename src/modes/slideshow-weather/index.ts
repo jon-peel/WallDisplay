@@ -3,6 +3,7 @@ import type { WeatherConfig } from '../../services/weather'
 import { fetchWeather, loadCache, weatherIcon, weatherDescription } from '../../services/weather'
 import type { WeatherData } from '../../services/weather'
 import { mountSlideshow } from '../slideshow/index'
+import { dbg } from '../../utils/dbg'
 
 const REFRESH_MS = 15 * 60 * 1000
 
@@ -176,6 +177,7 @@ export function mountSlideshowWeather(
 
   // Show cached data immediately if available
   const cached = loadCache()
+  dbg('weather panel: cache ' + (cached ? 'hit' : 'miss'))
   buildWeatherPanel(weatherPanel, cached, opts.weather.locationName)
 
   let refreshTimer: ReturnType<typeof setInterval> | null = null
@@ -183,10 +185,15 @@ export function mountSlideshowWeather(
 
   async function refresh(): Promise<void> {
     if (destroyed) return
+    dbg('weather panel: refresh start')
     try {
       const data = await fetchWeather(opts.weather)
-      if (!destroyed) buildWeatherPanel(weatherPanel, data, opts.weather.locationName)
-    } catch {
+      if (!destroyed) {
+        buildWeatherPanel(weatherPanel, data, opts.weather.locationName)
+        dbg('weather panel: rendered')
+      }
+    } catch (err) {
+      dbg('weather panel: refresh failed', err)
       if (!destroyed && !cached) {
         buildWeatherPanel(weatherPanel, null, opts.weather.locationName)
       }

@@ -1,4 +1,25 @@
 import type { Units, WeatherProvider } from '../generated/app-config'
+import { dbg } from '../utils/dbg'
+
+const FETCH_TIMEOUT_MS = 12000
+
+async function fetchWithTimeout(url: string, ms: number): Promise<Response> {
+  if (typeof AbortController === 'undefined') {
+    return fetch(url)
+  }
+  const ctrl = new AbortController()
+  const timer = setTimeout(() => ctrl.abort(), ms)
+  try {
+    return await fetch(url, { signal: ctrl.signal })
+  } catch (err) {
+    if (err instanceof Error && err.name === 'AbortError') {
+      throw new Error('timeout after ' + ms + 'ms')
+    }
+    throw err
+  } finally {
+    clearTimeout(timer)
+  }
+}
 
 export interface WeatherData {
   locationName: string
@@ -117,7 +138,8 @@ async function fetchOpenMeteo(
     `&daily=temperature_2m_max,temperature_2m_min,weather_code` +
     `&timezone=auto&forecast_days=6&temperature_unit=${tempUnit}`
 
-  const res = await fetch(url)
+  const res = await fetchWithTimeout(url, FETCH_TIMEOUT_MS)
+  dbg('weather: http', res.status)
   if (!res.ok) throw new Error(`Open-Meteo ${res.status}`)
   const data = (await res.json()) as {
     current: {
@@ -135,6 +157,7 @@ async function fetchOpenMeteo(
       weather_code: number[]
     }
   }
+  dbg('weather: parsed ok')
 
   // Find the current hour index in the hourly array
   const currentHour = data.current.time.slice(0, 13) // "YYYY-MM-DDTHH"
@@ -182,13 +205,17 @@ async function fetchOpenWeatherMap(
 ): Promise<WeatherData> {
   const owmUnits = units === 'imperial' ? 'imperial' : 'metric'
   const [curRes, fcRes] = await Promise.all([
-    fetch(
+    fetchWithTimeout(
       `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=${owmUnits}`,
+      FETCH_TIMEOUT_MS,
     ),
-    fetch(
+    fetchWithTimeout(
       `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=${owmUnits}&cnt=16`,
+      FETCH_TIMEOUT_MS,
     ),
   ])
+  dbg('weather: http current', curRes.status)
+  dbg('weather: http forecast', fcRes.status)
 
   if (!curRes.ok) throw new Error(`OWM ${curRes.status}`)
   if (!fcRes.ok) throw new Error(`OWM forecast ${fcRes.status}`)
@@ -205,6 +232,7 @@ async function fetchOpenWeatherMap(
       weather: Array<{ id: number; description: string }>
     }>
   }
+  dbg('weather: parsed ok')
 
   const curCode = cur.weather[0]?.id ?? 800
   const hourly = fc.list.slice(0, 12).map((entry) => {
@@ -287,6 +315,7 @@ export interface WeatherConfig {
 }
 
 export async function fetchWeather(cfg: WeatherConfig): Promise<WeatherData> {
+  dbg('weather: fetching', cfg.provider)
   try {
     let data: WeatherData
     if (cfg.provider === 'openweathermap') {
@@ -302,9 +331,14 @@ export async function fetchWeather(cfg: WeatherConfig): Promise<WeatherData> {
     }
     saveCache(data)
     return data
-  } catch {
+  } catch (err) {
+    dbg('weather: fetch failed', err)
     const cached = loadCache()
-    if (cached) return cached
+    if (cached) {
+      dbg('weather: serving cached')
+      return cached
+    }
+    dbg('weather: no cache available')
     throw new Error('Weather unavailable and no cache')
   }
 }
